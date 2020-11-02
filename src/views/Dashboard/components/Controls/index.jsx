@@ -4,7 +4,6 @@ import Button from '../../../../components/Button';
 import { AiFillDelete } from "react-icons/ai";
 import { GoPlus } from "react-icons/go";
 
-
 const ControlsContainer = styled.div`
     width: 100%;
     display: grid;
@@ -13,12 +12,11 @@ const ControlsContainer = styled.div`
     justify-content: end;
 `;
 
-function Controls({onClickAdd}) {
+function Controls({onClickAdd, showDeleteBtn}) {
     return (
         <ControlsContainer>
-            <Button text="Nuevo" icon={GoPlus} onClick={onClickAdd}/>
-            <Button text="Editar" theme="info"/>
-            <Button text="Eliminar" theme="danger" icon={AiFillDelete}/>
+            <Button text="Nuevo" icon={GoPlus} onClick={()=>onClickAdd()}/>
+            {showDeleteBtn && <Button text="Eliminar" theme="danger" icon={AiFillDelete}/>} 
         </ControlsContainer>
     );
 }

@@ -34,13 +34,19 @@ const Error = styled.p`
     margin-top: 8px;
 `;
 
-function RadioButton({label, name, error, options}) {
+function RadioButton({label, name, error, selected, options}) {
     return (
         <Container>
             <Label>{label}</Label>
             {options.map( (option, key) => (
                 <Fragment key={key}>
-                    <StyledRadioButton type="radio" id={`rb${option.value}`} name={name} value={option.value} />
+                    <StyledRadioButton 
+                        type="radio" 
+                        id={`rb${option.value}`} 
+                        name={name} 
+                        value={option.value} 
+                        defaultChecked={selected === option.value && true}
+                    />
                     <RadioButtonLabel htmlFor={`rb${option.value}`}>{option.label}</RadioButtonLabel>
                 </Fragment>
             ))}

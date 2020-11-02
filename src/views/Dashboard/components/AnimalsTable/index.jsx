@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import Checkbox from '../../../../components/Checkbox';
-import animals from '../../../../utils/animals.json';
+import Spinner from '../../../../components/Spinner';
 
 const StyledTable = styled.div`
     width: 100%;
@@ -10,16 +10,29 @@ const StyledTable = styled.div`
 
 const tableGrid = css`
     display: grid;
-    grid-template-columns: 40px repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 8px;
-    background-color: #fff;
     padding: 8px;
 `;
 
 const TableHead = styled.div`
-    ${tableGrid}
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
     border: 1px solid #b6b6b6;
     margin-bottom: 16px;
+    background-color: #fff;
+`;
+
+const Action = styled.div`
+    padding: 8px;
+    flex: 0 0 auto;
+`;
+
+const TableHeaders = styled.div`
+    width: calc(100% - 30px);
+    flex: 0 0 auto;
+    ${tableGrid}
 `;
 
 const TableBody = styled.div`
@@ -27,13 +40,31 @@ const TableBody = styled.div`
 `;
 
 const TableRow = styled.div`
-    ${tableGrid}
+    display: flex;
     align-items: center;
+    background-color: #fff;
 
     &:hover{
         background-color: #dad8d8;
         cursor: pointer;
     }
+`;
+
+const TableRowData =  styled(TableHeaders)`
+    align-items: center;
+
+    &:hover{
+        cursor: pointer;
+    }
+`;
+
+const LoadingRow = styled.div`
+    background-color: #fff;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const NameCol = styled.div`
@@ -56,27 +87,88 @@ const Col = styled.p`
     margin: 0;
 `;
 
-function AnimalsTable() {
+function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
+
+    const [ checkedNumber, setCheckedNumber ] = useState(0);
+    const [ isAllChecked, setIsAllChecked ] = useState(false);
+
+    const getAllAnimalId = () => {
+        return animals.map( animal => animal.id );
+    };
+    
+    const handleCheckAll = e => {
+        const { checked } = e.target;
+        const rows = document.querySelectorAll('.row-action');
+        if(checked){
+            rows.forEach( row =>{
+                row.checked = true;
+                const allIds = getAllAnimalId();
+                checkRow(allIds);
+                setCheckedNumber(animals.length);
+            })
+        }else{
+            rows.forEach( row =>{
+                row.checked = false;
+                checkRow([]);
+                setCheckedNumber(0);
+            })
+        }
+    }
+
+    const handleCheckRow = e =>{
+        const { checked } = e.target;
+        const animalId = e.target.id;
+
+        if(checked){
+            checkRow(animalId);
+            setCheckedNumber(checkedNumber + 1);
+        }else{
+            uncheckRow(animalId);
+            setCheckedNumber(checkedNumber - 1);
+        }
+    }
+
+    useEffect(()=>{
+        if(checkedNumber === animals.length && !isLoading ){
+            setIsAllChecked(true);
+        }else{
+            setIsAllChecked(false);
+        }
+        // eslint-disable-next-line
+    },[checkedNumber]);
+
     return (
         <StyledTable>
             <TableHead>
-                <Checkbox id="all"/>
-                <b>Nombre</b>
-                <b>Tipo</b>
-                <b>Fecha de ingreso</b>
+                <Action>
+                    <Checkbox checked={isAllChecked} onChange={handleCheckAll} id="all"/>
+                </Action>
+                <TableHeaders>
+                    <b>Nombre</b>
+                    <b>Tipo</b>
+                    <b>Fecha de ingreso</b>
+                </TableHeaders>
             </TableHead>
             <TableBody>
-                {animals.map(animal => (
-                        <TableRow key={animal.id}>
-                            <Checkbox id={animal.id}/>
-                            <NameCol>
-                                <img src={animal.img} alt={animal.name}/>
-                                <p>{animal.name}</p>
-                            </NameCol>
-                            <Col>{animal.animal_kind}</Col>
-                            <Col>{animal.registered_in}</Col>
-                        </TableRow>
-                    ))
+                {!isLoading 
+                    ? animals.map(animal => (
+                            <TableRow key={animal.id}>
+                                <Action>
+                                    <Checkbox onChange={handleCheckRow} className="row-action" id={animal.id}/>
+                                </Action>
+                                <TableRowData onClick={()=>{onClickRow(animal)}}>
+                                    <NameCol>
+                                        <img src={animal.img} alt={animal.name}/>
+                                        <p>{animal.name}</p>
+                                    </NameCol>
+                                    <Col>{animal.animal_kind}</Col>
+                                    <Col>{animal.registered_in}</Col>
+                                </TableRowData>
+                            </TableRow>
+                        ))
+                    : <LoadingRow>
+                        <Spinner/>
+                      </LoadingRow>
                 }
             </TableBody>
         </StyledTable>

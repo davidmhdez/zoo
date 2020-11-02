@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from '../../utils/style/colors';
 import { BsImage } from "react-icons/bs";
@@ -51,35 +51,48 @@ const Error = styled.p`
     margin-top: 8px;
 `;
 
-function ImageField({label, error, onChange, ...rest}) {
+function ImageField({label, error, onChange, img, ...rest}) {
 
     const [ selectedImg, setSelectedImg ] =  useState(false);
+    const [ inputError, setInputError ] = useState(error);
 
     const handleChange = e => {
-        // console.log(e.target);
-        // console.log(e);
-        setSelectedImg(URL.createObjectURL(e.target.files[0]));
-        onChange();
+        const file = e.target.files[0];
+        if(file.type === 'image/jpe' || file.type === 'image/png'){
+            setInputError('');
+            setSelectedImg(URL.createObjectURL(file));
+            onChange();
+        }else{
+            setInputError('Formato de imagen invalido');            
+        }
     };
+
+    useEffect(()=>{
+        if(img){
+            setSelectedImg(img);
+        }
+        // eslint-disable-next-line
+    },[])
 
     return (
         <Container>
             <Label>{label}</Label>
             <ImageFieldWrapper>
-                <StyledInput type="file" onChange={handleChange}/>
+                <StyledInput type="file" accept="image/x-png,image/jpeg" onChange={handleChange} {...rest}/>
                 {selectedImg 
                     ? <Img src={selectedImg}/>
                     : <StyledIcon/>
                 }
             </ImageFieldWrapper>
-            {error && <Error>{error}</Error>}
+            {inputError && <Error>{inputError}</Error>}
         </Container>
     );
 }
 
 ImageField.defaultProps = {
     label: 'Image field',
-    onChange: ()=>{}
+    onChange: ()=>{},
+    error: ''
 };
 
 export default ImageField;
