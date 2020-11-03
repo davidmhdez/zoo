@@ -1,8 +1,8 @@
 const animal = {
     img: "",
     name: "",
-    animal_kind: "",
-    weight: "",
+    kind: "",
+    weight: 0,
     gender: null,
     food: "",
     observations: ""

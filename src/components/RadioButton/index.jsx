@@ -34,7 +34,7 @@ const Error = styled.p`
     margin-top: 8px;
 `;
 
-function RadioButton({label, name, error, selected, options}) {
+function RadioButton({label, name, error, selected, onChange, options}) {
     return (
         <Container>
             <Label>{label}</Label>
@@ -46,6 +46,7 @@ function RadioButton({label, name, error, selected, options}) {
                         name={name} 
                         value={option.value} 
                         defaultChecked={selected === option.value && true}
+                        onChange={onChange}
                     />
                     <RadioButtonLabel htmlFor={`rb${option.value}`}>{option.label}</RadioButtonLabel>
                 </Fragment>
@@ -56,7 +57,8 @@ function RadioButton({label, name, error, selected, options}) {
 }
 
 RadioButton.defaultProps = {
-    label: 'Radio'
+    label: 'Radio',
+    onChange: ()=>{}
 };
 
 export default RadioButton;

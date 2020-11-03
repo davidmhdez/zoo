@@ -8,9 +8,10 @@ import {
     useModal,
     ModalTransition,
   } from 'react-simple-hook-modal';
+import { toast } from 'react-toastify';
 import AddOrUpdateAnimal from '../../components/Forms/AddOrUpdateAnimal';
 import defaultAnimal from '../../utils/default/animal';
-import animalsData from '../../utils/animals.json';
+import { addAnimalAPI, deleteAnimalAPI, getAllAnimalsAPI, updateAnimalAPI } from '../../api/animal';
 
 const DashboardContainer = styled.div`
     padding: 16px;
@@ -33,7 +34,7 @@ function Dashboard() {
     const addAnimalsToRemove = animalsId => {
         if(Array.isArray(animalsId)){
             setAnimalsToRemove(animalsId);
-        }else if(typeof(animalsId) == 'string'){
+        }else if(typeof(animalsId) == 'number'){
             setAnimalsToRemove([...animalsToRemove, animalsId]);
         }
     };
@@ -54,12 +55,49 @@ function Dashboard() {
         openModal();
     };
 
-    const getAnimals = () =>{
-        setTimeout(() => {
-            setAnimals(animalsData);
-            setIsLoading(false);
-        }, 3000);
+    const getAnimals = async () =>{
+        const animalsData = await getAllAnimalsAPI();
+        setAnimals(animalsData);
+        setIsLoading(false);
     }
+
+    const addAnimal = async (animal) => {
+        try {
+            const newAnimal = await addAnimalAPI(animal);
+            setAnimals([...animals, newAnimal]);
+            toast.success('Animal agregado correctamente');
+        } catch (error) {
+            console.error(error);
+            toast.error('No se pudo guardar, intentalo mas tarde');
+        }
+    };
+
+    const updateAnimal = async (animal) => {
+        try {
+            const updatedAnimal = await updateAnimalAPI(animal);
+            setAnimals(
+                animals.map( currentAnimal => currentAnimal.id === updatedAnimal.id ? updatedAnimal : currentAnimal )
+            );
+            toast.success('Animal actualizado correctamente');
+        } catch (error) {
+            console.error(error);
+            toast.error('No se pudo guardar, intentalo mas tarde');
+        }
+    };
+
+    const deleteAnimals = async () => {
+        try {
+            await deleteAnimalAPI(animalsToRemove);
+            setAnimals(
+                animals.filter( an => !animalsToRemove.includes(an.id))
+            );
+            setAnimalsToRemove([]);
+            toast.success('Animales eliminados correctamente');
+        } catch (error) {
+            console.error(error);
+            toast.error('No se pudo eliminar, intentalo mas tarde');
+        }
+    };
 
     useEffect(()=>{
 
@@ -79,15 +117,30 @@ function Dashboard() {
         <Layout>
             <DashboardContainer>
                 <Title>Lista de animales</Title>
-                <Controls onClickAdd={handleOpenModal} showDeleteBtn={showDeleteBtn}/>
-                <AnimalsTable animals={animals} onClickRow={handleOpenModal} checkRow={addAnimalsToRemove} uncheckRow={removeAnimalsToRemove} isLoading={isLoading}/>
+                <Controls 
+                    onClickAdd={handleOpenModal} 
+                    onClickDelete={deleteAnimals} 
+                    showDeleteBtn={showDeleteBtn}
+                />
+                <AnimalsTable 
+                    animals={animals} 
+                    onClickRow={handleOpenModal} 
+                    checkRow={addAnimalsToRemove} 
+                    uncheckRow={removeAnimalsToRemove} 
+                    isLoading={isLoading}
+                />
             </DashboardContainer>
             <Modal
                 id="any-unique-identifier"
                 isOpen={isModalOpen}
                 transition={ModalTransition.SCALE}
             >
-                <AddOrUpdateAnimal animal={animal} onCancel={handleCloseModal}/>
+                <AddOrUpdateAnimal 
+                    animal={animal}
+                    onAddAnimal={addAnimal} 
+                    onUpdateAnimal={updateAnimal}
+                    onCancel={handleCloseModal}
+                />
             </Modal>
         </Layout>
     );

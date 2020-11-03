@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const ax = axios.create({
-    baseURL:'http://104.131.113.219'
+    baseURL: `${process.env.REACT_APP_BACKEND_URL}`
 })
 
 export default ax;

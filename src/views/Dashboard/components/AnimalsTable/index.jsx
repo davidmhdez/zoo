@@ -117,7 +117,7 @@ function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
 
     const handleCheckRow = e =>{
         const { checked } = e.target;
-        const animalId = e.target.id;
+        const animalId = parseInt(e.target.id);
 
         if(checked){
             checkRow(animalId);
@@ -158,11 +158,11 @@ function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
                                 </Action>
                                 <TableRowData onClick={()=>{onClickRow(animal)}}>
                                     <NameCol>
-                                        <img src={animal.img} alt={animal.name}/>
+                                        <img src={animal.thumbnail} alt={animal.name}/>
                                         <p>{animal.name}</p>
                                     </NameCol>
-                                    <Col>{animal.animal_kind}</Col>
-                                    <Col>{animal.registered_in}</Col>
+                                    <Col>{animal.kind}</Col>
+                                    <Col>{animal.createdAt}</Col>
                                 </TableRowData>
                             </TableRow>
                         ))

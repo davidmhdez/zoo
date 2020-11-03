@@ -58,10 +58,10 @@ function ImageField({label, error, onChange, img, ...rest}) {
 
     const handleChange = e => {
         const file = e.target.files[0];
-        if(file.type === 'image/jpe' || file.type === 'image/png'){
+        if(file.type === 'image/jpeg' || file.type === 'image/png'){
             setInputError('');
             setSelectedImg(URL.createObjectURL(file));
-            onChange();
+            onChange(e);
         }else{
             setInputError('Formato de imagen invalido');            
         }

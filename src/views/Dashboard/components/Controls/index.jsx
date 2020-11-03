@@ -12,11 +12,11 @@ const ControlsContainer = styled.div`
     justify-content: end;
 `;
 
-function Controls({onClickAdd, showDeleteBtn}) {
+function Controls({onClickAdd, onClickDelete, showDeleteBtn}) {
     return (
         <ControlsContainer>
             <Button text="Nuevo" icon={GoPlus} onClick={()=>onClickAdd()}/>
-            {showDeleteBtn && <Button text="Eliminar" theme="danger" icon={AiFillDelete}/>} 
+            {showDeleteBtn && <Button text="Eliminar" theme="danger" onClick={()=>onClickDelete()} icon={AiFillDelete}/>} 
         </ControlsContainer>
     );
 }

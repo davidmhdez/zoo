@@ -5,8 +5,8 @@ export function addOrUpdateAnimal(values){
         errors.name = "El nombre es requerido";
     }
 
-    if(values.animal_kind === ""){
-        errors.animal_kind = "El tipo de animal es requerido";
+    if(values.kind === ""){
+        errors.kind = "El tipo de animal es requerido";
     }
 
     if(!values.gender){

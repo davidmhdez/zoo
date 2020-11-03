@@ -32,15 +32,20 @@ const Col = styled.div`
     margin: 8px;
 `;
 
-function AddOrUpdateAnimal({onCancel, animal}) {
+function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
 
     const genderOptions = [
         { label: "Macho", value: 1 },
         { label: "Hembra", value: 0 }
     ];
 
-    const saveAnimal = () => {
-        console.log('Guardando...');
+    const saveAnimal = async () => {
+        if(!animal.id){
+            await onAddAnimal(values);
+        }else{
+            await onUpdateAnimal(values);
+        }
+        onCancel();
     }
 
     const { errors, handleChange, values, handleSubmit } = useValidation(animal, addOrUpdateAnimal, saveAnimal);
@@ -48,19 +53,70 @@ function AddOrUpdateAnimal({onCancel, animal}) {
     return (
         <form onSubmit={handleSubmit}>
             <Title>{animal.id ? 'Actualizar' : 'Nuevo'} animal</Title>
-            <Input name="name" onChange={handleChange} error={errors.name} label="Nombre" value={values.name}/>
-            <Input name="animal_kind" onChange={handleChange} error={errors.animal_kind} label="Tipo de animal" value={values.animal_kind} />
+            <Input 
+                name="name" 
+                placeholder="Nombre o sobrenombre"
+                onChange={handleChange}
+                onChangeCapture={handleChange}
+                error={errors.name} 
+                label="Nombre" 
+                value={values.name}
+            />
+            <Input 
+                name="kind" 
+                placeholder="Leon, Jirafa, etc..."
+                onChange={handleChange} 
+                onChangeCapture={handleChange}
+                error={errors.kind} 
+                label="Tipo de animal" 
+                value={values.kind} 
+            />
             <Row>
                 <Col>
-                    <Input name="weight" onChange={handleChange} error={errors.weight} label="Peso" value={values.weight}/>
-                    <RadioButton label="Genero" selected={values.gender} name="gender" options={genderOptions} onChange={handleChange} error={errors.gender}/>
+                    <Input 
+                        name="weight" 
+                        type="number"
+                        placeholder="kilos"
+                        onChange={handleChange} 
+                        onChangeCapture={handleChange}
+                        error={errors.weight} 
+                        label="Peso" 
+                        value={values.weight}
+                    />
+                    <RadioButton 
+                        label="Genero" 
+                        selected={values.gender} 
+                        name="gender" 
+                        options={genderOptions} 
+                        onChange={handleChange} 
+                        error={errors.gender}
+                    />
                 </Col>
                 <Col>
-                    <ImageField img={animal.img} label="Imagen"/>
+                    <ImageField 
+                        img={animal.img} 
+                        name="img" 
+                        onChange={handleChange} 
+                        label="Imagen"
+                    />
                 </Col>
             </Row>
-            <Input name="food" onChange={handleChange} error={errors.food} label="Comida preferida" value={values.food}/>
-            <TextArea name="observations" onChange={handleChange} label="Observaciones" defaultValue={values.observations} />
+            <Input 
+                name="food" 
+                onChange={handleChange} 
+                onChangeCapture={handleChange}
+                placeholder="Filete, pasto, etc..."
+                error={errors.food} 
+                label="Comida preferida" 
+                value={values.food}
+            />
+            <TextArea 
+                name="observations" 
+                placeholder="Comportamientos, cuidados y datos de interes"
+                onChange={handleChange} 
+                label="Observaciones" 
+                defaultValue={values.observations} 
+            />
             <ButtonsContainer>
                 <Button text="Cancelar" onClick={onCancel} theme="secondary"/>
                 <Button type="submit" text="Guardar"/>

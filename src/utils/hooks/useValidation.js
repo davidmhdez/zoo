@@ -19,10 +19,20 @@ const useValidation = (initialState, validate, submitFunction) => {
     },[errors])
 
     const handleChange = e =>{
-        setValues({
-            ...values,
-            [e.target.name]: e.target.value
-        })
+
+        const { type } = e.target;
+
+        if(type === 'file'){
+            setValues({
+                ...values,
+                [e.target.name]: e.target.files
+            })
+        }else{
+            setValues({
+                ...values,
+                [e.target.name]: e.target.value
+            })
+        }
     }
 
     const handleSubmit = e =>{
