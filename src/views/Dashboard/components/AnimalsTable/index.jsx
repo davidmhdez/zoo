@@ -96,7 +96,7 @@ function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading, isS
     }
 
     useEffect(()=>{
-        if(checkedNumber === animals.length && !isLoading ){
+        if( !isLoading && checkedNumber === animals.length && animals.length > 0){
             setIsAllChecked(true);
         }else{
             setIsAllChecked(false);

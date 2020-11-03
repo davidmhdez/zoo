@@ -8,7 +8,7 @@ export async function getAllAnimalsAPI(){
         return animals;
 
     } catch (error) {
-        console.error(error);
+        throw new Error(error);
     }
 }
 

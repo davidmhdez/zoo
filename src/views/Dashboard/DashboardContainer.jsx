@@ -1,34 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Layout from '../../components/Layout';
-import styled from 'styled-components';
-import Controls from './components/Controls';
-import AnimalsTable from './components/AnimalsTable';
-import {
-    Modal,
-    useModal,
-    ModalTransition,
-  } from 'react-simple-hook-modal';
 import { toast } from 'react-toastify';
-import AddOrUpdateAnimal from '../../components/Forms/AddOrUpdateAnimal';
+import { useModal } from 'react-simple-hook-modal';
 import defaultAnimal from '../../utils/default/animal';
-import { addAnimalAPI, deleteAnimalAPI, getAllAnimalsAPI, updateAnimalAPI } from '../../api/animal';
+import 
+    { 
+        addAnimalAPI,
+        deleteAnimalAPI, 
+        getAllAnimalsAPI, 
+        updateAnimalAPI 
+    } from '../../api/animal';
+import Dashboard from './Dashboard';
 
-const DashboardContainer = styled.div`
-    padding: 16px;
-`;
-
-const Title = styled.h4`
-    font-size: 20px;
-    text-align: center;
-`;
-
-const TableContainer = styled.div`
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1000px;
-`;
-
-function Dashboard() {
+function DashboardContainer() {
 
     const { isModalOpen, openModal, closeModal } = useModal();
     const [ animals, setAnimals ] = useState([]);
@@ -63,10 +46,16 @@ function Dashboard() {
     };
 
     const getAnimals = async () =>{
-        const animalsData = await getAllAnimalsAPI();
-        setAnimals(animalsData);
+        try {
+            const animalsData = await getAllAnimalsAPI();
+            setAnimals(animalsData);
+            setIsSaving(false);
+        } catch (error) {
+            console.error(error);
+            setAnimals([]);
+            toast.error('No se pudieron obtener los animales del servidor');
+        }
         setIsLoading(false);
-        setIsSaving(false);
     }
 
     const addAnimal = async (animal) => {
@@ -160,41 +149,24 @@ function Dashboard() {
     },[animalsToRemove])
 
     return (
-        <Layout>
-            <DashboardContainer>
-                <Title>Lista de animales</Title>
-                <TableContainer>
-                    <Controls 
-                        onClickAdd={handleOpenModal} 
-                        onClickDelete={deleteAnimals} 
-                        showDeleteBtn={showDeleteBtn}
-                        isLoading={isSaving}
-                    />
-                    <AnimalsTable 
-                        animals={animals} 
-                        onClickRow={handleOpenModal} 
-                        checkRow={addAnimalsToRemove} 
-                        uncheckRow={removeAnimalsToRemove} 
-                        isLoading={isLoading}
-                        isSaving={isSaving}
-                    />
-                </TableContainer>
-            </DashboardContainer>
-            <Modal
-                id="any-unique-identifier"
-                isOpen={isModalOpen}
-                transition={ModalTransition.SCALE}
-            >
-                <AddOrUpdateAnimal 
-                    animal={animal}
-                    onAddAnimal={addAnimal} 
-                    onUpdateAnimal={updateAnimal}
-                    onCancel={handleCloseModal}
-                    isSaving={isSaving}
-                />
-            </Modal>
-        </Layout>
+        <>
+          <Dashboard
+            animal={animal}
+            animals={animals}
+            showDeleteBtn={showDeleteBtn}
+            isSaving={isSaving}
+            isLoading={isLoading}
+            isModalOpen={isModalOpen}
+            handleOpenModal={handleOpenModal}
+            handleCloseModal={handleCloseModal}            
+            addAnimalsToRemove={addAnimalsToRemove}
+            removeAnimalsToRemove={removeAnimalsToRemove}
+            addAnimal={addAnimal}
+            updateAnimal={updateAnimal}
+            deleteAnimals={deleteAnimals}
+          />  
+        </>
     );
 }
 
-export default Dashboard;
+export default DashboardContainer;
