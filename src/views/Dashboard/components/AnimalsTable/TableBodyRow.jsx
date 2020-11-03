@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Checkbox from '../../../../components/Checkbox';
-import { tableGrid } from '../../../../utils/style/tablegrid';
+import { tableGrid, tableOverflow } from '../../../../utils/style/tablegrid';
 
 const TableRow = styled.div`
     display: flex;
@@ -48,6 +48,7 @@ const NameCol = styled.div`
 
 const Col = styled.p`
     margin: 0;
+    ${tableOverflow}
 `;
 
 function TableBodyRow({animal, onClickRow, onCheckRow}) {

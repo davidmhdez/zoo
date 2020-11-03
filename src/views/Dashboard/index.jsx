@@ -22,6 +22,12 @@ const Title = styled.h4`
     text-align: center;
 `;
 
+const TableContainer = styled.div`
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1000px;
+`;
+
 function Dashboard() {
 
     const { isModalOpen, openModal, closeModal } = useModal();
@@ -157,20 +163,22 @@ function Dashboard() {
         <Layout>
             <DashboardContainer>
                 <Title>Lista de animales</Title>
-                <Controls 
-                    onClickAdd={handleOpenModal} 
-                    onClickDelete={deleteAnimals} 
-                    showDeleteBtn={showDeleteBtn}
-                    isLoading={isSaving}
-                />
-                <AnimalsTable 
-                    animals={animals} 
-                    onClickRow={handleOpenModal} 
-                    checkRow={addAnimalsToRemove} 
-                    uncheckRow={removeAnimalsToRemove} 
-                    isLoading={isLoading}
-                    isSaving={isSaving}
-                />
+                <TableContainer>
+                    <Controls 
+                        onClickAdd={handleOpenModal} 
+                        onClickDelete={deleteAnimals} 
+                        showDeleteBtn={showDeleteBtn}
+                        isLoading={isSaving}
+                    />
+                    <AnimalsTable 
+                        animals={animals} 
+                        onClickRow={handleOpenModal} 
+                        checkRow={addAnimalsToRemove} 
+                        uncheckRow={removeAnimalsToRemove} 
+                        isLoading={isLoading}
+                        isSaving={isSaving}
+                    />
+                </TableContainer>
             </DashboardContainer>
             <Modal
                 id="any-unique-identifier"

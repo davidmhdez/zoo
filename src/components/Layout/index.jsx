@@ -1,26 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import Sidebar from '../Sidebar';
-import colors from '../../utils/style/colors';
-
-const LayoutContainer = styled.div`
-    display: flex;
-`;
+import Header from '../Header';
 
 const LayoutWrapper = styled.main`
-    background-color:${colors.background};
-    width: 100%;
-    height: 100vh;
+    margin-top: 63px;
 `;
 
 function Layout(props) {
     return (
-        <LayoutContainer>
-            <Sidebar/>
+        <>
+            <Header/>
             <LayoutWrapper>
                 {props.children}
             </LayoutWrapper>
-        </LayoutContainer>
+        </>
     );
 }
 

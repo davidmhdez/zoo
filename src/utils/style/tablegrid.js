@@ -7,4 +7,10 @@ const tableGrid = css`
     padding: 8px;
 `;
 
-export {tableGrid};
+const tableOverflow = css`
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;
+
+export {tableGrid, tableOverflow};

@@ -16,11 +16,7 @@ function GlobalStyles() {
         
         body{
             font-family: 'Nunito', sans-serif;
-        }
-
-        .selected{
-            background-color: ${colors.background};
-            color: ${colors.main}!important;
+            background-color:${colors.background};
         }
 
         input:disabled, button:disabled, div:disabled{

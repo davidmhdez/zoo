@@ -26,6 +26,7 @@ const Action = styled.div`
 
 const TableHeaders = styled.div`
     width: calc(100% - 30px);
+    align-items: center;
     flex: 0 0 auto;
     ${tableGrid}
 `;

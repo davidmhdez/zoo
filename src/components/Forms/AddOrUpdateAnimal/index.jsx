@@ -7,6 +7,7 @@ import Input from '../../Input';
 import RadioButton from '../../RadioButton';
 import TextArea from '../../TextArea';
 import { addOrUpdateAnimal } from '../../../utils/validation/animal';
+import MQ from '../../../utils/style/media-queries';
 
 const Title = styled.h5`
     font-size: 22px;
@@ -24,12 +25,15 @@ const ButtonsContainer = styled.div`
 
 const Row = styled.div`
     display: flex;
-    margin: -8px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 `;
 
 const Col = styled.div`
-    width: 50%;
-    margin: 8px;
+    width: 100%;
+    ${MQ.tablet}{
+        width: 48%;
+    }
 `;
 
 function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal, isSaving}) {
