@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Checkbox from '../../../../components/Checkbox';
 import Spinner from '../../../../components/Spinner';
+import { tableGrid } from '../../../../utils/style/tablegrid';
+import TableBodyRow from './TableBodyRow';
 
 const StyledTable = styled.div`
     width: 100%;
     margin-top: 24px;
-`;
-
-const tableGrid = css`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 8px;
-    padding: 8px;
 `;
 
 const TableHead = styled.div`
@@ -37,25 +32,7 @@ const TableHeaders = styled.div`
 
 const TableBody = styled.div`
     border: 1px solid #b6b6b6;
-`;
-
-const TableRow = styled.div`
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-
-    &:hover{
-        background-color: #dad8d8;
-        cursor: pointer;
-    }
-`;
-
-const TableRowData =  styled(TableHeaders)`
-    align-items: center;
-
-    &:hover{
-        cursor: pointer;
-    }
+    position: relative;
 `;
 
 const LoadingRow = styled.div`
@@ -67,27 +44,16 @@ const LoadingRow = styled.div`
     align-items: center;
 `;
 
-const NameCol = styled.div`
-    display: flex;
-    align-items: center;
-
-    img{
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-
-    p{
-        margin: 0;
-    }
+const TableBodyCover = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color: rgba(179, 178, 178, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
 `;
 
-const Col = styled.p`
-    margin: 0;
-`;
-
-function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
+function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading, isSaving}) {
 
     const [ checkedNumber, setCheckedNumber ] = useState(0);
     const [ isAllChecked, setIsAllChecked ] = useState(false);
@@ -137,11 +103,30 @@ function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
         // eslint-disable-next-line
     },[checkedNumber]);
 
+    const rows = animals.length === 0 
+                    ? <LoadingRow>Aun no hay animales registrados</LoadingRow> 
+                    : animals.map(animal => (
+                        <TableBodyRow
+                            key={animal.id} 
+                            animal={animal}
+                            onClickRow={onClickRow}
+                            onCheckRow={handleCheckRow}
+                        />
+                    )
+    );
+
+    const loadingSpinner = <LoadingRow><Spinner/></LoadingRow>;
+
     return (
         <StyledTable>
             <TableHead>
                 <Action>
-                    <Checkbox checked={isAllChecked} onChange={handleCheckAll} id="all"/>
+                    <Checkbox 
+                        checked={isAllChecked} 
+                        onChange={handleCheckAll} 
+                        id="all"
+                        disabled={isLoading}
+                    />
                 </Action>
                 <TableHeaders>
                     <b>Nombre</b>
@@ -150,25 +135,10 @@ function AnimalsTable({animals, onClickRow, checkRow, uncheckRow, isLoading}) {
                 </TableHeaders>
             </TableHead>
             <TableBody>
-                {!isLoading 
-                    ? animals.map(animal => (
-                            <TableRow key={animal.id}>
-                                <Action>
-                                    <Checkbox onChange={handleCheckRow} className="row-action" id={animal.id}/>
-                                </Action>
-                                <TableRowData onClick={()=>{onClickRow(animal)}}>
-                                    <NameCol>
-                                        <img src={animal.thumbnail} alt={animal.name}/>
-                                        <p>{animal.name}</p>
-                                    </NameCol>
-                                    <Col>{animal.kind}</Col>
-                                    <Col>{animal.createdAt}</Col>
-                                </TableRowData>
-                            </TableRow>
-                        ))
-                    : <LoadingRow>
-                        <Spinner/>
-                      </LoadingRow>
+                {!isLoading ? rows : loadingSpinner}
+                {isSaving && !isLoading 
+                    ? <TableBodyCover/>
+                    : ''
                 }
             </TableBody>
         </StyledTable>

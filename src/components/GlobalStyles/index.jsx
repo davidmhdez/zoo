@@ -22,6 +22,10 @@ function GlobalStyles() {
             background-color: ${colors.background};
             color: ${colors.main}!important;
         }
+
+        input:disabled, button:disabled, div:disabled{
+            cursor: not-allowed;
+        }
     `;
 
     return (

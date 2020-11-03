@@ -9,7 +9,7 @@ export function addOrUpdateAnimal(values){
         errors.kind = "El tipo de animal es requerido";
     }
 
-    if(!values.gender){
+    if(values.gender == null){
         errors.gender = "El genero del animal es requerido";
     }
 

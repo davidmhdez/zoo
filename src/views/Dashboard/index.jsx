@@ -30,6 +30,7 @@ function Dashboard() {
     const [ animalsToRemove, setAnimalsToRemove ] = useState([]);
     const [ showDeleteBtn, setShowDeleteBtn ] = useState(false); 
     const [ isLoading, setIsLoading ] = useState(true);
+    const [ isSaving, setIsSaving ] = useState(true);
 
     const addAnimalsToRemove = animalsId => {
         if(Array.isArray(animalsId)){
@@ -59,13 +60,17 @@ function Dashboard() {
         const animalsData = await getAllAnimalsAPI();
         setAnimals(animalsData);
         setIsLoading(false);
+        setIsSaving(false);
     }
 
     const addAnimal = async (animal) => {
         try {
+            setIsSaving(true);
             const newAnimal = await addAnimalAPI(animal);
             setAnimals([...animals, newAnimal]);
-            toast.success('Animal agregado correctamente');
+            setIsSaving(false);
+            closeModal();
+            toast.success('Animal agregado correctamente');            
         } catch (error) {
             console.error(error);
             toast.error('No se pudo guardar, intentalo mas tarde');
@@ -74,11 +79,14 @@ function Dashboard() {
 
     const updateAnimal = async (animal) => {
         try {
+            setIsSaving(true);
             const updatedAnimal = await updateAnimalAPI(animal);
             setAnimals(
                 animals.map( currentAnimal => currentAnimal.id === updatedAnimal.id ? updatedAnimal : currentAnimal )
             );
-            toast.success('Animal actualizado correctamente');
+            setIsSaving(false);
+            closeModal();
+            toast.success('Animal actualizado correctamente');            
         } catch (error) {
             console.error(error);
             toast.error('No se pudo guardar, intentalo mas tarde');
@@ -86,17 +94,49 @@ function Dashboard() {
     };
 
     const deleteAnimals = async () => {
+        let toastMessage = {
+            type: '',
+            message: ''
+        }
+        setIsSaving(true);
+
         try {
-            await deleteAnimalAPI(animalsToRemove);
-            setAnimals(
-                animals.filter( an => !animalsToRemove.includes(an.id))
-            );
-            setAnimalsToRemove([]);
-            toast.success('Animales eliminados correctamente');
+            const animalsDeletedFromApi = await deleteAnimalAPI(animalsToRemove);
+
+            if(animalsDeletedFromApi.length === animalsToRemove.length){
+                setAnimals( 
+                    animals.filter( an => !animalsDeletedFromApi.includes(an.id))
+                );
+                setAnimalsToRemove([]);
+                toastMessage = {
+                    type: 'success',
+                    message: 'Animales eliminados correctamente'
+                }
+            }else if(animalsDeletedFromApi.length < animalsToRemove.length && animalsDeletedFromApi.length > 0){
+                const animalsRemainig = animalsToRemove.filter( an => !animalsDeletedFromApi.includes(an));
+                setAnimals( 
+                    animals.filter( an => !animalsDeletedFromApi.includes(an.id))
+                );
+                setAnimalsToRemove(animalsRemainig);
+                toastMessage = {
+                    type: 'warning',
+                    message: 'Algunos animales no se eliminaron'
+                }
+            }else{
+                toastMessage = {
+                    type: 'error',
+                    message: 'No se elimino ningun animal'
+                }
+            }
         } catch (error) {
             console.error(error);
-            toast.error('No se pudo eliminar, intentalo mas tarde');
+            toastMessage = {
+                type: 'error',
+                message: 'No se pudo eliminar, intentalo mas tarde'
+            }
         }
+        setIsSaving(false);
+        toast[toastMessage.type](toastMessage.message);
     };
 
     useEffect(()=>{
@@ -121,6 +161,7 @@ function Dashboard() {
                     onClickAdd={handleOpenModal} 
                     onClickDelete={deleteAnimals} 
                     showDeleteBtn={showDeleteBtn}
+                    isLoading={isSaving}
                 />
                 <AnimalsTable 
                     animals={animals} 
@@ -128,6 +169,7 @@ function Dashboard() {
                     checkRow={addAnimalsToRemove} 
                     uncheckRow={removeAnimalsToRemove} 
                     isLoading={isLoading}
+                    isSaving={isSaving}
                 />
             </DashboardContainer>
             <Modal
@@ -140,6 +182,7 @@ function Dashboard() {
                     onAddAnimal={addAnimal} 
                     onUpdateAnimal={updateAnimal}
                     onCancel={handleCloseModal}
+                    isSaving={isSaving}
                 />
             </Modal>
         </Layout>

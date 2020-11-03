@@ -3,9 +3,8 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     .sk-circle {
-        margin: 100px auto;
-        width: 40px;
-        height: 40px;
+        width: ${props => props.size ? props.size : '40px'};
+        height: ${props => props.size ? props.size : '40px'};
         position: relative;
     }
     .sk-circle .sk-child {
@@ -21,7 +20,7 @@ const Container = styled.div`
         margin: 0 auto;
         width: 15%;
         height: 15%;
-        background-color: #333;
+        background-color: ${props => props.color ? props.color : '#333'};
         border-radius: 100%;
         -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
         animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
@@ -125,9 +124,9 @@ const Container = styled.div`
         }
 `;
 
-function Spinner() {
+function Spinner({color, size, ...rest}) {
     return (
-        <Container>
+        <Container color={color} size={size} {...rest}>
             <div className="sk-circle">
                 <div className="sk-circle1 sk-child"></div>
                 <div className="sk-circle2 sk-child"></div>

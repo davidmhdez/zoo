@@ -3,7 +3,6 @@ import { sanitizeAllAnimals, sanitizeAnimal, getFormData, preUpdateAnimal } from
 
 export async function getAllAnimalsAPI(){
     try {
-        
         const { data } = await ax.get('/animals');
         const animals = sanitizeAllAnimals(data);
         return animals;
@@ -43,9 +42,25 @@ export async function updateAnimalAPI(animal){
 
 export async function deleteAnimalAPI(animalIds){
     try {
-        await animalIds.forEach( async (id) => {
-            await ax.delete(`/animals/${id}`);
-        });
+        const animalsDeleted = [];
+
+        if(animalIds.length > 1){
+            const deleteReq = animalIds.map( id => ax.delete(`/animals/${id}`));
+            const results = await Promise.allSettled(deleteReq);
+            results.forEach( res => {
+                if(res.status === 'fulfilled'){
+                    const { id } = res.value.data;
+                    animalsDeleted.push(id);
+                }
+            });
+        }else{
+            const id = animalIds[0];
+            await  ax.delete(`/animals/${id}`);
+            animalsDeleted.push(id);
+        }
+
+        return animalsDeleted;
+
     } catch (error) {
         throw new Error(error);
     }

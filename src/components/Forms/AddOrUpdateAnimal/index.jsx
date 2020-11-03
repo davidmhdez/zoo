@@ -32,7 +32,7 @@ const Col = styled.div`
     margin: 8px;
 `;
 
-function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
+function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal, isSaving}) {
 
     const genderOptions = [
         { label: "Macho", value: 1 },
@@ -45,7 +45,6 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
         }else{
             await onUpdateAnimal(values);
         }
-        onCancel();
     }
 
     const { errors, handleChange, values, handleSubmit } = useValidation(animal, addOrUpdateAnimal, saveAnimal);
@@ -61,6 +60,7 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                 error={errors.name} 
                 label="Nombre" 
                 value={values.name}
+                disabled={isSaving}
             />
             <Input 
                 name="kind" 
@@ -69,7 +69,8 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                 onChangeCapture={handleChange}
                 error={errors.kind} 
                 label="Tipo de animal" 
-                value={values.kind} 
+                value={values.kind}
+                disabled={isSaving} 
             />
             <Row>
                 <Col>
@@ -82,6 +83,7 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                         error={errors.weight} 
                         label="Peso" 
                         value={values.weight}
+                        disabled={isSaving}
                     />
                     <RadioButton 
                         label="Genero" 
@@ -90,6 +92,7 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                         options={genderOptions} 
                         onChange={handleChange} 
                         error={errors.gender}
+                        disabled={isSaving}
                     />
                 </Col>
                 <Col>
@@ -98,6 +101,7 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                         name="img" 
                         onChange={handleChange} 
                         label="Imagen"
+                        disabled={isSaving}
                     />
                 </Col>
             </Row>
@@ -109,6 +113,7 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                 error={errors.food} 
                 label="Comida preferida" 
                 value={values.food}
+                disabled={isSaving}
             />
             <TextArea 
                 name="observations" 
@@ -116,10 +121,21 @@ function AddOrUpdateAnimal({onAddAnimal, onUpdateAnimal, onCancel, animal}) {
                 onChange={handleChange} 
                 label="Observaciones" 
                 defaultValue={values.observations} 
+                disabled={isSaving}
             />
             <ButtonsContainer>
-                <Button text="Cancelar" onClick={onCancel} theme="secondary"/>
-                <Button type="submit" text="Guardar"/>
+                <Button 
+                    text="Cancelar" 
+                    onClick={onCancel} 
+                    theme="secondary" 
+                    disabled={isSaving} 
+                />
+                <Button 
+                    type="submit" 
+                    text="Guardar" 
+                    disabled={isSaving}
+                    isLoading={isSaving}
+                />
             </ButtonsContainer>
         </form>
     );

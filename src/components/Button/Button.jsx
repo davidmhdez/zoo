@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { buttonThemes } from '../../utils/style/colors';
+import Spinner from '../Spinner';
 
 const StyledButton = styled.button`
     padding: 8px 22px;
@@ -23,12 +24,13 @@ const StyledButton = styled.button`
     }
 `;
 
-function Button({text, type, theme, icon: Icon, ...rest}) {
+function Button({text, type, theme, icon: Icon, isLoading, ...rest}) {
 
     return (
         <StyledButton type={type} theme={theme} {...rest}>
             {Icon && <Icon/>}
             {text}
+            {isLoading && <Spinner size="16px" color="#fff" style={{marginLeft: '8px'}}/>}
         </StyledButton>
     );
 }

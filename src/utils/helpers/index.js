@@ -31,10 +31,10 @@ export function sanitizeAnimal(animal){
 }
 
 export function getFormData(data){
-    let formData = new FormData();
+    let formData = new FormData();    
     const {img} = data;
     delete data.img;
-    if(img){
+    if(typeof(img) === 'object'){
         formData.append(`files.img`, img[0], img[0].name);
     }
     formData.append('data', JSON.stringify(data));
